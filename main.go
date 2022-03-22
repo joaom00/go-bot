@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -21,20 +20,23 @@ func main() {
 	twitchOauthToken := os.Getenv("TWITCH_OAUTH_TOKEN")
 	twitchChannel := os.Getenv("TWITCH_CHANNEL")
 
-	commands := map[string]string{"!resgatar": "ResgatarHandler", "!carteira": "CarteiraHandler", "!saldo": "SaldoHandler"}
-
 	client := twitch.NewClient(twitchUsename, twitchOauthToken)
 
 	client.OnPrivateMessage(func(message twitch.PrivateMessage) {
-		fmt.Println(message.Message)
-		isCommand := strings.HasPrefix(message.Message, "!")
-		if isCommand {
-			commandName := strings.Split(message.Message, " ")
 
-			test := commands[commandName[0]]
+		router := NewRouter()
+		router.Handle("!resgatar", handleRedeem)
+		router.Handle("!carteira", handleWallet)
+		router.Handle("!saldo", handleBalance)
 
-			client.Say(twitchChannel, test)
+		bc := NewBotCommand(router.FindHandler)
+		command := strings.Split(message.Message, " ")[0]
+
+		if handler, found := bc.findHandler(command); found {
+			handler(bc)
 		}
+		// client.Say(twitchChannel, commandName[0])
+
 	})
 
 	client.Join(twitchChannel)
