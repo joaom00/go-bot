@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func handleRedeem(bc *BotCommand) {
-	fmt.Println("handleRedeem")
+	bc.client.Say(bc.message.Channel, fmt.Sprintf("%s resgatou 1 token", bc.message.User.DisplayName))
 }
 
 func handleWallet(bc *BotCommand) {

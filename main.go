@@ -29,7 +29,7 @@ func main() {
 		router.Handle("!carteira", handleWallet)
 		router.Handle("!saldo", handleBalance)
 
-		bc := NewBotCommand(router.FindHandler)
+		bc := NewBotCommand(router.FindHandler, client, &message)
 		command := strings.Split(message.Message, " ")[0]
 
 		if handler, found := bc.findHandler(command); found {
